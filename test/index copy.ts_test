@@ -1,0 +1,85 @@
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { TTT__factory,TTT,TikTakJudgement,TikTakJudgement__factory } from "../typechain";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+let Tik:TTT__factory;
+
+let TikTak:TTT;
+let alice:SignerWithAddress;
+let bob:SignerWithAddress;
+let owner:SignerWithAddress;
+
+// describe("TT1", function () {
+//   before("",async () => {
+//     const [alice,bob,owner] = await ethers.getSigners();
+//     Tik = await ethers.getContractFactory("TTT");
+//     TikTak = await Tik.deploy(alice.address,bob.address,{value:ethers.utils.parseEther("1")});
+//     await TikTak.deployed();
+ 
+//   })
+//   it("Should return the new greeting once it's changed", async function () {
+//     // const deployedContract = await Tik.deploy({ value: initialBalance });
+//     // console.log(await TTT.getBoardInfo());
+//     await TikTak.connect(alice).makeTurn(1);
+//     // console.log(await TikTak.getBoardInfo());
+//     await TikTak.connect(bob).makeTurn(2);
+//     // console.log(await TikTak.getBoardInfo());
+//     const info1 = await TikTak.getBoardInfo();
+//     // const cryptedMessage = ethers.utils.solidityKeccak256(
+//     //   ["address","uint256","uint256","string","uint256"],
+//     //   args);
+//     // const arrayify = ethers.utils.arrayify(cryptedMessage);
+//     // const flatSig = await alice.signMessage(arrayify);
+
+//     // const info2 = await ethers.utils.
+//     // console.log(ethers.utils.hexDataSlice(info1,32));
+//   });
+//   // 0x01000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+// });
+
+let TJ_factory:TikTakJudgement__factory;
+let TJ:TikTakJudgement;
+describe("TT2", function () {
+  before("",async () => {
+    [alice,bob,owner] = await ethers.getSigners();
+    TJ_factory = await ethers.getContractFactory("TikTakJudgement");
+    TJ = await TJ_factory.deploy();
+    await TJ.deployed();
+ 
+  })
+  it("Should return the new greeting once it's changed", async function () {
+    await TJ.connect(alice).iWannaPlay({ value: ethers.utils.parseEther("0.5") });
+    await TJ.connect(bob).iWannaPlay({ value: ethers.utils.parseEther("0.5") });
+    const args = [[0,0,0,0,0,0,0,0,0],1,1];
+    // create message
+    const cryptedMessage = ethers.utils.solidityKeccak256(["uint8[]","uint256","uint8"],args);
+    const arrayify = ethers.utils.arrayify(cryptedMessage);
+    // this:
+    const flatSig = await alice.signMessage(arrayify);
+    // equals:
+    const sig = await ethers.provider.send('personal_sign', [ethers.utils.hexlify(arrayify), alice.address.toLowerCase()]);
+
+    // const addressFromContract = await TJ.verify([0,0,0,0,0,0,0,0,0],1,1,flatSig);
+
+    console.log("Signed message is: ",flatSig, "\n or this:",sig);
+    console.log("Alice address is: ",alice.address);
+    // console.log("Verified by contract: ",addressFromContract[0]);
+    let pubKey = ethers.utils.recoverPublicKey(ethers.utils.arrayify(ethers.utils.hashMessage(ethers.utils.arrayify(cryptedMessage))), flatSig);
+    let address = ethers.utils.computeAddress(pubKey);
+    console.log("From PubKey to address: ",address);
+    // hashmessage is : Personal messages are converted to UTF-8 bytes and prefixed with
+    //  \x19Ethereum Signed Message: and the length of message.
+    let address2 = ethers.utils.recoverAddress(ethers.utils.hashMessage(arrayify),flatSig);
+    console.log("Using recover address : ",address2);
+    // console.log(addressFromContract);
+    // this:
+    console.log(ethers.utils.hashMessage(arrayify))
+    // is equal to: 
+    //  bytes32 acceptedHash = keccak256(
+    //     abi.encodePacked(_board, nonce,cell)
+    // );
+    // bytes32 acceptedMessage = acceptedHash.toEthSignedMessageHash();
+
+  });
+  // 0x01000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+});
