@@ -7,8 +7,6 @@ node_modules
 .prettierrc
 .solhint.json
 .solhintignore
-coverage
-coverage.json
 typechain
 
 #Hardhat files
