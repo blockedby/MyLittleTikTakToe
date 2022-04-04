@@ -6,7 +6,7 @@ node_modules
 .prettierignore
 .prettierrc
 .solhint.json
-
+.solhintignore
 coverage
 coverage.json
 typechain
