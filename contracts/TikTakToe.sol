@@ -17,6 +17,7 @@ contract TikTakJudgement is ReentrancyGuard {
     address[] private board = new address[](9);
 
     event PlayerJoined(address player);
+    event PlayerLeft(address player);
     event GameStarted(address player1, address player2);
     event NewTurn(address player, uint256 cell);
     event GameForwarded(uint8 fromTurn, uint8 toTurn);
@@ -193,6 +194,13 @@ contract TikTakJudgement is ReentrancyGuard {
         )
     {
         return (board, nextTurn, player1, player2);
+    }
+
+    function iDontPlay() external {
+        require(msg.sender == player1 && player2 == address(0) && !isActive, "IDP1");
+        player1 = address(0);
+        emit PlayerLeft(msg.sender);
+        payable(msg.sender).transfer(0.5 * 1 ether);
     }
 
     function iWannaPlay() external payable {

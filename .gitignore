@@ -9,6 +9,7 @@ node_modules
 .solhintignore
 typechain
 
+scripts/encript.ts
 #Hardhat files
 cache
 artifacts
