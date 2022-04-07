@@ -74,6 +74,11 @@ describe("TikTakJudgement", function () {
       await expect(TJ.connect(alice).iWannaPlay({ value: ethers.utils.parseEther("0.5") })).to.emit(TJ, "PlayerJoined").withArgs(alice.address);
       await expect(TJ.connect(bob).iWannaPlay({ value: ethers.utils.parseEther("0.5") })).to.emit(TJ, "GameStarted").withArgs(alice.address, bob.address);
     });
+    it("Second player should live", async () => {
+      await expect(TJ.connect(alice).iWannaPlay({ value: ethers.utils.parseEther("0.5") })).to.emit(TJ, "PlayerJoined").withArgs(alice.address);
+      expect(await TJ.connect(alice).iDontPlay()).to.changeEtherBalance(alice,ethers.utils.parseEther("0.5"));
+      // await expect(TJ.connect(bob).iWannaPlay({ value: ethers.utils.parseEther("0.5") })).to.emit(TJ, "GameStarted").withArgs(alice.address, bob.address);
+    });
   });
   describe("OffChainTest", async () => {
     let initialState: IBoardState;
